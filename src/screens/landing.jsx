@@ -34,7 +34,7 @@ const Landing = () => {
   const [userName, setUsername] = useState("");
   const [userStatus, setUserStatus] = useState("");
   const [emailStatus, setEmailStatus] = useState("");
-  const [addressStatus, setaddressstatus] = useState("");
+  const [addressStatus, setAddressStatus] = useState("");
   const [errorMessages, setErrorMessages] = useState({});
   const [userEmpty, setUserEmpty] = useState(true);
   const [emailEmpty, setEmailEmpty] = useState(true);
@@ -49,36 +49,37 @@ const Landing = () => {
 
   useEffect(() => {
     if (!wallet.connected) {
-      setaddressstatus("");
+      setAddressStatus("");
       return;
     }
-    // console.log("connected wallet name: ", wallet.name);
-    // console.log("account address: ", wallet.account?.address);
-    // console.log("account publicKey: ", wallet.account?.publicKey);
     const addr = get(wallet, "account.address", "");
     setPublicAddress(addr);
     let options = {
-      walletAddress: publicAddress,
+      walletAddress: addr,
       socialType: "sui wallet",
     };
 
     axios
-      .get("api/v1/identity/checkwalletexists", options)
+      .get("api/v1/identity/checkwalletexists", {
+        params: {
+          walletAddress: addr,
+          socialType: options.socialType,
+        },
+      })
       .then(function (response) {
-        // console.log(response.data.value.code);
-        setaddressstatus(response.data.value.code);
+        setAddressStatus(response.data.value.code);
         if (response.data.value.code === "wallet_exists") {
           let options = {
             email: null,
             responseSocialloginDetails: [
               {
                 loginType: 1,
-                firstname: string,
-                lastname: string,
-                email: string,
-                userName: string,
-                profileImage: string,
-                socialid: publicAddress,
+                firstname: null,
+                lastname: null,
+                email: null,
+                userName: null,
+                profileImage: null,
+                socialid: addr,
                 socialType: "sui wallet",
               },
             ],
@@ -88,6 +89,8 @@ const Landing = () => {
             .then(function (response) {
               //  console.log(response.data.value.code);
               setUserStatus(response.data.value.code);
+              localStorage.setItem("userData", JSON.stringify(response.data));
+              navigate("/home");
             })
             .catch(function (error) {
               console.log("sasa", error);
@@ -100,7 +103,7 @@ const Landing = () => {
         }
       })
       .catch(function (error) {
-        console.log("sasa", error);
+        console.error("sasa", error);
       });
   }, [wallet.connected]);
 
@@ -333,8 +336,8 @@ const Landing = () => {
             style={{
               marginTop: "30px",
               width: "100%",
-              background:"green",
-              color:"white"
+              background: "green",
+              color: "white",
             }}
             disabled={userEmpty}
             onClick={handleSubmit}

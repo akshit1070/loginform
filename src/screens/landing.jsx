@@ -48,6 +48,16 @@ const Landing = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let a=localStorage.getItem("againLogin");
+   // console.log(a)
+
+    if(a=="qw")
+    {
+     // console.log(a)
+      localStorage.setItem("againLogin","ty");
+      
+    }
+    else{
     if (!wallet.connected) {
       setAddressStatus("");
       return;
@@ -105,6 +115,7 @@ const Landing = () => {
       .catch(function (error) {
         console.error("sasa", error);
       });
+    }
   }, [wallet.connected]);
 
   const checkUserNameExists = (evt) => {

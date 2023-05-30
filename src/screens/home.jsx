@@ -1,9 +1,13 @@
 import { get } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ConnectButton } from "@suiet/wallet-kit";
+import { useWallet } from "@suiet/wallet-kit";
 
 
 const Home = () => {
+  const wallet = useWallet();
+
   const [userId, setUserId] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
   const navigate = useNavigate();
@@ -22,6 +26,8 @@ const Home = () => {
   const handleClick = async ()=>{
      localStorage.removeItem('userData');
      localStorage.setItem("againLogin","qw");
+     wallet.disconnect();
+
      navigate("/");
 
 
